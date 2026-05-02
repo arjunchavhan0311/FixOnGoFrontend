@@ -1,0 +1,95 @@
+.bp-page {
+  padding: 80px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.bp-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.bp-hero h1 {
+  font-size: 42px;
+}
+
+.bp-primary {
+  padding: 14px 32px;
+  background: #5b6cff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bp-benefits,
+.bp-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 60px;
+}
+
+
+/* PAGE */
+.bp-page {
+  padding: 80px 20px;
+  max-width: 1100px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* HERO */
+.bp-hero {
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.bp-hero h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+/* PRIMARY BUTTON */
+.bp-primary {
+  padding: 14px 32px;
+  background: #5b6cff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  position: relative;
+  z-index: 3;
+}
+
+/* BENEFITS + STEPS */
+.bp-benefits,
+.bp-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+/* APPLY NOW (BOTTOM BUTTON) */
+.bp-page > button {
+  margin-top: 40px;
+  padding: 12px 24px;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+}
+
+/* SAFETY: NAV & CART SHOULD NOT BLOCK */
+.nav,
+.nav-scrolled {
+  pointer-events: auto;
+}
