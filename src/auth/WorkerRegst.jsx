@@ -39,7 +39,7 @@ function WorkerRegistration({ isModal = false }) {
     worker_languages: "",
     worker_certificates: "",
     worker_education: "",
-    worker_status: "ACTIVE"
+    worker_fees: ""
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -292,15 +292,14 @@ function WorkerRegistration({ isModal = false }) {
                 onChange={handleChange}
               />
 
-              <select
+              <input
                 className="input-soft"
-                name="worker_status"
+                placeholder="Fees (₹)"
+                name="worker_fees"
+                type="number"
+                min="100"
                 onChange={handleChange}
-              >
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-                <option value="SUSPENDED">Suspended</option>
-              </select>
+              />
             </div>
           </div>
 

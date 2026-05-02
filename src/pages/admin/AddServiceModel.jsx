@@ -17,7 +17,6 @@ export function AddServiceModal({
   const servicePayload = {
     service_Title: serviceForm.name,
     service_Description: serviceForm.description,
-    service_price: Number(serviceForm.pricing) || 100,
     serviceCategory: serviceForm.category,
     total_worker: 1,
   };
@@ -46,7 +45,6 @@ export function AddServiceModal({
       category: "",
       description: "",
       image: null,
-      pricing: "",
     });
   } catch (error) {
     console.error(error);
@@ -148,23 +146,7 @@ export function AddServiceModal({
                 required
               />
           </div>
-
-            <div>
-              <label className="block text-slate-700 font-bold mb-2 text-sm">
-                Price
-              </label>
-              <input
-                type="number"
-                value={serviceForm.pricing}
-                onChange={(e) =>
-                  setServiceForm({ ...serviceForm, pricing: e.target.value })
-                }
-                className="w-full px-4 py-3 border rounded-xl"
-                min="100"
-              />
-            </div>
           </div>
-
           <div className="flex gap-3 pt-4">
             <button
               type="submit"

@@ -75,7 +75,7 @@ export default function PendingRequestsPage({
                       </div>
                       <div className="flex items-center gap-2 text-sm text-slate-600">
                         <DollarSign size={16} className="text-slate-400" />
-                        <span className="font-semibold">{request.hourlyRate}</span>
+                        <span className="font-semibold">{request.worker_fees}</span>
                       </div>
                     </div>
 

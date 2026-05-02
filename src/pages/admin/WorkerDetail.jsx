@@ -68,7 +68,7 @@ export default function WorkerDetailPage({
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <DollarSign size={16} className="text-slate-400" />
-                <span className="text-slate-600 font-semibold">{selectedWorker.hourlyRate}</span>
+                <span className="text-slate-600 font-semibold">{selectedWorker.worker_fees}</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Calendar size={16} className="text-slate-400" />

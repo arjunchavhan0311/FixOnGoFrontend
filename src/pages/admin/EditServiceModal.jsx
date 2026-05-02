@@ -76,15 +76,7 @@ export function EditServiceModal({
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-2xl text-center"
               />
             </div>
-            <div>
-              <label className="block text-slate-700 font-bold mb-2 text-sm">Pricing Range</label>
-              <input
-                type="text"
-                value={serviceForm.pricing}
-                onChange={(e) => setServiceForm({ ...serviceForm, pricing: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-slate-900"
-              />
-            </div>
+            
           </div>
           <div className="flex gap-3 pt-4">
             <button

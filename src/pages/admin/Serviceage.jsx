@@ -66,7 +66,6 @@ export default function ServicesPage({
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{service.workers} Pros</span>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-indigo-600">{service.pricing}</span>
                 <span className="flex items-center gap-1.5 text-emerald-600 text-xs font-bold">
                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div> Active
                 </span>

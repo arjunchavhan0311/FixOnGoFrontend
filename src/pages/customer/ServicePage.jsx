@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, Search, Sparkles, Star } from "lucide-react";
+import { ChevronRight, Search, Sparkles, Star, IndianRupee } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
@@ -72,7 +72,8 @@ function BookingModal({ service, isOpen, onClose }) {
               workerId: w.worker_Id,
               workerName: w.worker_name,
               experience: w.worker_experience,
-             workerImg: w.worker_profile_img,
+              workerImg: w.worker_profile_img,
+              worker_fees: w.worker_fees,
               rating: rating ? rating.toFixed(1) : "0.0",
               totalJobs: 0,
             };
@@ -143,6 +144,10 @@ function BookingModal({ service, isOpen, onClose }) {
                       className="text-amber-500 fill-amber-500"
                     />
                     <span className="text-sm font-bold">{worker.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IndianRupee size={18} className="text-green-600" />
+                    <span className="text-sm font-bold">{worker.worker_fees}</span>
                   </div>
                 </div>
               );

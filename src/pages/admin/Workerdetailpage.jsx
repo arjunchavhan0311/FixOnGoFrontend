@@ -76,7 +76,7 @@ export default function WorkerDetailPage({
               <InfoRow icon={<MapPin size={16} />} value={selectedWorker.location} />
               <InfoRow
                 icon={<DollarSign size={16} />}
-                value={selectedWorker.hourlyRate}
+                value={selectedWorker.worker_fees}
                 bold
               />
               <InfoRow

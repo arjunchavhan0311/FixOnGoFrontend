@@ -159,7 +159,7 @@ export default function AdminDashboard() {
           service: w.serviceCategory,
           experience: `${w.worker_experience} years`,
           location: `${w.street_address}, ${w.city}, ${w.state},${w.district}, ${w.pincode}`,
-          hourlyRate: "₹--",
+          worker_fees: `₹${w.worker_fees}`,
           bio: w.worker_bio,
           aadharImg: w.worker_Aadhar_img, // Aadhar Image
           panImg: w.worker_Pan_img, // PAN Image
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
     service: '',
     experience: '',
     location: '',
-    hourlyRate: '',
+    worker_fees: '',
     bio: ''
   });
 
@@ -321,7 +321,7 @@ export default function AdminDashboard() {
       service: workerForm.service,
       experience: workerForm.experience,
       location: workerForm.location,
-      hourlyRate: workerForm.hourlyRate,
+      worker_fees: workerForm.worker_fees,
       bio: workerForm.bio,
       rating: 0,
       status: 'approved',
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
       portfolio: []
     };
     setWorkers([...workers, newWorker]);
-    setWorkerForm({ name: '', email: '', phone: '', service: '', experience: '', location: '', hourlyRate: '', bio: '' });
+    setWorkerForm({ name: '', email: '', phone: '', service: '', experience: '', location: '', worker_fees: '', bio: '' });
     setIsAddWorkerModalOpen(false);
   };
 
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
       service: worker.service,
       experience: worker.experience,
       location: worker.location,
-      hourlyRate: worker.hourlyRate,
+      worker_fees: worker.worker_fees,
       bio: worker.bio || ''
     });
     setIsEditWorkerModalOpen(true);

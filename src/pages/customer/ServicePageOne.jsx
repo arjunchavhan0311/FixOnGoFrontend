@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, Sparkles, Star } from "lucide-react";
+import { ChevronRight, Sparkles, Star, IndianRupee } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
@@ -73,6 +73,7 @@ function BookingModal({ service, isOpen, onClose }) {
               workerName: w.worker_name,
               experience: w.worker_experience,
               workerImg: w.worker_profile_img,
+              worker_fees: w.worker_fees,
               rating: rating ? rating.toFixed(1) : "0.0",
               totalJobs: 0,
             };
@@ -143,7 +144,11 @@ function BookingModal({ service, isOpen, onClose }) {
                     />
                     <span className="text-sm font-bold">{worker.rating}</span>
                   </div>
-                </div>
+                  <div className="flex items-center gap-1">
+                    <IndianRupee size={18} className="text-green-600" />
+                    <span className="text-sm font-bold">{worker.worker_fees}</span>
+                  </div>
+                  </div>
               );
             })}
           </div>
@@ -191,9 +196,6 @@ function ServiceCard({ service, onBook }) {
         <div className="flex items-center gap-2 mb-1">
           <Star size={12} className="text-amber-400 fill-amber-400" />
           <span className="text-xs font-bold">{service.rating}</span>
-          <span className="ml-auto text-blue-600 font-black text-sm">
-            {service.price}
-          </span>
         </div>
 
         <h4 className="text-lg font-black mb-1">{service.name}</h4>
@@ -229,10 +231,10 @@ export default function ServicesPage() {
   const [selectedService, setSelectedService] = useState(null);
   const [servicesData, setServicesData] = useState([]);
 
-const categories = [
-  "All Services",
-  ...SERVICE_CATEGORIES.map((c) => c.label)
-];
+  const categories = [
+    "All Services",
+    ...SERVICE_CATEGORIES.map((c) => c.label)
+  ];
 
   useEffect(() => {
     const loadServices = async () => {
