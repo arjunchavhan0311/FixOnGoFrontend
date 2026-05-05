@@ -559,31 +559,6 @@ export default function ServiceHistoryDashboard() {
                           >
                             View
                           </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate("/feedback", {
-                                state: {
-                                  historyId: row.historyId,
-                                  workerId: row.worker?.worker_Id,
-                                  serviceId: row.services?.service_Id
-                                }
-                              });
-                            }}
-                            style={{
-                              background: "#16a34a",
-                              color: "#fff",
-                              border: "none",
-                              padding: "5px 12px",
-                              borderRadius: 8,
-                              cursor: "pointer",
-                              fontSize: 12,
-                              fontWeight: 700,
-                              marginLeft: 6
-                            }}
-                          >
-                            Feedback
-                          </button>
                         </td>
                       </tr>
                     );

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
+import ForgotPassword from "./auth/ForgotPassword";
+
 // Customer Pages
 import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
@@ -42,8 +44,12 @@ function ScrollToTop() {
 
 // Routes where Navbar and Footer should be hidden
 const HIDDEN_NAV_ROUTES = [
-  "/adminpage", "/adminlogin", "/adminsignup",
-  "/workerdashboard", "/workerlogin", "/workerregistration"
+  "/adminpage", 
+  "/adminlogin", 
+  "/adminsignup",
+  "/workerdashboard", 
+  "/workerlogin", 
+  "/workerregistration"
 ];
 
 function App() {
@@ -55,28 +61,29 @@ function App() {
   const location = useLocation();
 
   // Hide navbar & footer on admin and worker routes
-  const hideNav = HIDDEN_NAV_ROUTES.includes(location.pathname);
+  const hideNav = HIDDEN_NAV_ROUTES.includes(location.pathname)||
+  location.pathname.startsWith("/forgot-password");;
 
   /* -------------------- RESTORE LOGIN -------------------- */
   useEffect(() => {
-  const user = localStorage.getItem("fixongo_auth");
+    const user = localStorage.getItem("fixongo_auth");
 
-  if (user) {
-    try {
-      const parsed = JSON.parse(user);
+    if (user) {
+      try {
+        const parsed = JSON.parse(user);
 
-      if (parsed?.token) {
-        setIsLoggedIn(true);
-      } else {
+        if (parsed?.token) {
+          setIsLoggedIn(true);
+        } else {
+          localStorage.removeItem("fixongo_auth");
+          setIsLoggedIn(false);
+        }
+      } catch {
         localStorage.removeItem("fixongo_auth");
         setIsLoggedIn(false);
       }
-    } catch {
-      localStorage.removeItem("fixongo_auth");
-      setIsLoggedIn(false);
     }
-  }
-}, []);
+  }, []);
 
   useEffect(() => {
     const openLogin = () => setShowLogin(true);
@@ -90,7 +97,7 @@ function App() {
 
   /* -------------------- LOGIN HANDLER -------------------- */
   const handleLoginSuccess = (userData) => {
-    
+
     setIsLoggedIn(true);
     setShowLogin(false);
     setShowSignup(false);
@@ -101,7 +108,7 @@ function App() {
     localStorage.removeItem("fixongo_auth");
     setIsLoggedIn(false);
     navigate("/");
-     window.location.reload();
+    window.location.reload();
   };
 
   return (
@@ -140,7 +147,7 @@ function App() {
               </>
             }
           />
-
+         <Route path="/forgot-password/:role" element={<ForgotPassword />} />
           {/* CUSTOMER */}
           <Route path="/about" element={<AboutPage />} />
           <Route path="/service" element={<Service />} />
@@ -150,7 +157,7 @@ function App() {
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/trackservice" element={<TrackService />} />
           <Route path="/customerprofile" element={<CustomerProfilePage />} />
-         
+
 
           {/* WORKER */}
           <Route path="/workerlogin" element={<WorkerLogin />} />
@@ -164,7 +171,7 @@ function App() {
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/adminsignup" element={<AdminRegistration />} />
           <Route path="/adminpage" element={<MainPage />} />
-         
+
         </Routes>
 
         {/* Footer — hidden on admin and worker routes */}

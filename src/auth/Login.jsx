@@ -1,60 +1,66 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
 import { RiArrowRightLine, RiCloseLine, RiLockPasswordLine, RiMailLine } from "react-icons/ri";
 import { logIn } from "../services/customer-service";
+import { useNavigate } from "react-router-dom";
 
 function Login({ onLogin, onClose, onSignup }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const submit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  try {
-    const user = await logIn({ email, password });
-
-    console.log("LOGIN RESPONSE:", user);
-
-    if (!user || !user.token) {
-      alert("Login failed");
+    if (!email || !password) {
+      alert("Please fill all fields");
       return;
     }
 
-    localStorage.setItem(
-      "fixongo_auth",
-      JSON.stringify({
-        id: user.id,
-        token: user.token,
-        role: user.role,
-        email: user.email,
-        city: user.city,
-      })
-    );
+    try {
+      const user = await logIn({ email, password });
 
-    onLogin();
+      console.log("LOGIN RESPONSE:", user);
 
-  } catch (error) {
-    console.error("LOGIN ERROR:", error);
+      if (!user || !user.token) {
 
-    const msg =
-      error?.response?.data?.message ||
-      error?.response?.data?.error ||
-      "Invalid email or password";
+        alert("Login failed");
+        return;
+      }
 
-    alert(msg);
-  }
-};
+      localStorage.setItem(
+        "fixongo_auth",
+        JSON.stringify({
+          id: user.id,
+          token: user.token,
+          role: user.role,
+          email: user.email,
+          city: user.city,
+        })
+      );
+
+      onLogin();
+
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Invalid email or password";
+      setShowForgot(true); // ✅ show forgot option
+      alert(msg);
+    }
+  };
 
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
       {/* Background Overlay */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -63,14 +69,14 @@ function Login({ onLogin, onClose, onSignup }) {
       />
 
       {/* Login Card */}
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-black/20 overflow-hidden"
       >
         {/* Close Button */}
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
         >
@@ -93,38 +99,58 @@ function Login({ onLogin, onClose, onSignup }) {
           <div className="space-y-4">
             <div className="relative group">
               <RiMailLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />
-              <input 
+              <input
                 type="email"
-                placeholder="Email Address" 
+                placeholder="Email Address"
                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
-                onChange={(e) => setEmail(e.target.value)} 
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="relative group">
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={20} />
-              <input 
-                type="password" 
-                placeholder="Password" 
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all"
-                onChange={(e) => setPassword(e.target.value)} 
+                onChange={(e) => setPassword(e.target.value)}
               />
+              {/* Eye Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600"
+              >
+                {showPassword ? <RiEyeOffLine size={20} /> : <RiEyeLine size={20} />}
+              </button>
             </div>
           </div>
 
           {/* Action Button */}
-          <button 
+          <button
             type="submit"
             className="w-full mt-8 bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-slate-950 shadow-xl shadow-blue-200 hover:shadow-slate-300 transition-all active:scale-[0.98]"
           >
             Login to Account <RiArrowRightLine size={18} />
-          </button>
-
+          </button><br></br>
+          {showForgot && (
+            <div className="text-right">
+              <span
+                onClick={() => {
+                  onClose();
+                  navigate("/forgot-password/customer"); // ✅ clean navigation
+                }}
+                className="text-sm text-red-500 font-semibold hover:underline cursor-pointer"
+              >
+                Forgot Password?
+              </span>
+            </div>
+          )}
           {/* Footer Link */}
           <div className="mt-8 text-center">
             <p className="text-sm font-bold text-slate-500">
               New to FixOnGo?{" "}
-              <span 
+              <span
                 onClick={onSignup}
                 className="text-blue-600 cursor-pointer hover:underline underline-offset-4 decoration-2"
               >

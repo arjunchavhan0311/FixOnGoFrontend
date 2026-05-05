@@ -17,6 +17,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -52,6 +53,7 @@ const AdminLogin = () => {
       console.error(error);
 
       if (error.response?.status === 401) {
+        setShowForgot(true); // ✅ show forgot option
         alert("Invalid email or password");
       } else {
         alert("Login failed. Please try again.");
@@ -159,6 +161,16 @@ const AdminLogin = () => {
                 </>
               )}
             </button>
+            {showForgot && (
+              <div className="text-right -mt-3">
+                <Link
+                  to="/forgot-password/admin"
+                  className="text-sm text-red-500 font-semibold hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+            )}
           </form>
 
           {/* Signup */}

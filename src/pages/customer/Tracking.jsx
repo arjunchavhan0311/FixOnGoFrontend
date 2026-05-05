@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   CircleCheck,
   Clock,
+  XCircle,
   Loader2,
   MapPin,
   MoreVertical,
@@ -13,15 +14,15 @@ import {
   Wrench
 } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { getServiceHistory } from "../../services/customer-bookservices";
 
 // ─── STATUS CONFIG ──────────────────────────────────────────────────────────
 const STATUS_STEPS = [
   {
-    key: "PENDING",
-    label: "Booking Confirmed",
-    subLabel: "Your request has been received",
+    key: "REGISTERED",
+    label: "Service Booked",
+    subLabel: "Your service request has been sent to worker",
     icon: CheckCircle2,
     color: "text-blue-500",
     bg: "bg-blue-50",
@@ -30,8 +31,19 @@ const STATUS_STEPS = [
     trackColor: "bg-blue-500",
   },
   {
+    key: "PENDING",
+    label: "In Queue Not Accepted",
+    subLabel: "Your request has been received & In a Queue",
+    icon: Clock,
+    color: "text-blue-500",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    activeBg: "bg-blue-500",
+    trackColor: "bg-blue-500",
+  },
+  {
     key: "ACCEPTED",
-    label: "Request Accepted",
+    label: "Service Request Accepted",
     subLabel: "Expert is heading to your location",
     icon: Navigation,
     color: "text-indigo-500",
@@ -62,15 +74,26 @@ const STATUS_STEPS = [
     activeBg: "bg-emerald-500",
     trackColor: "bg-emerald-500",
   },
+  {
+    key: "REJECTED",
+    label: "Rejected",
+    subLabel: "Service has been rejected",
+    icon: XCircle,
+    color: "text-red-500",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    activeBg: "bg-red-500",
+    trackColor: "bg-red-500",
+  },
 ];
 
-const STATUS_ORDER = ["PENDING", "ACCEPTED", "IN_PROGRESS", "COMPLETED"];
+const NORMAL_FLOW = ["REGISTERED", "PENDING", "ACCEPTED", "IN_PROGRESS", "COMPLETED"];
+const REJECTED_FLOW = ["REGISTERED", "PENDING", "REJECTED"];
 
-const getStepIndex = (status) => {
-  const idx = STATUS_ORDER.indexOf(status?.toUpperCase());
+const getStepIndex = (status, flow) => {
+  const idx = flow.indexOf(status?.toUpperCase());
   return idx === -1 ? 0 : idx;
 };
-
 // ─── PULSE DOT ──────────────────────────────────────────────────────────────
 const PulseDot = ({ color }) => (
   <span className="relative flex h-3 w-3">
@@ -80,8 +103,21 @@ const PulseDot = ({ color }) => (
 );
 
 // ─── STATUS TRACKER ─────────────────────────────────────────────────────────
-const StatusTracker = ({ status }) => {
-  const currentIndex = getStepIndex(status);
+const StatusTracker = ({ status, booking, navigate }) => {
+  const upperStatus = status?.toUpperCase();
+
+  const isRejectedFlow = upperStatus === "REJECTED";
+
+  const steps = isRejectedFlow
+    ? STATUS_STEPS.filter(step =>
+      ["REGISTERED", "PENDING", "REJECTED"].includes(step.key)
+    )
+    : STATUS_STEPS.filter(step =>
+      ["REGISTERED", "PENDING", "ACCEPTED", "IN_PROGRESS", "COMPLETED"].includes(step.key)
+    );
+
+  const flow = isRejectedFlow ? REJECTED_FLOW : NORMAL_FLOW;
+  const currentIndex = getStepIndex(upperStatus, flow);
 
   return (
     <div className="bg-white rounded-[28px] border border-slate-100 shadow-sm p-6">
@@ -93,80 +129,106 @@ const StatusTracker = ({ status }) => {
         </span>
       </div>
 
-      <div className="space-y-0">
-        {STATUS_STEPS.map((step, index) => {
+      <div>
+        {steps.map((step, index) => {
           const isDone = index < currentIndex;
           const isActive = index === currentIndex;
-          const isPending = index > currentIndex;
+          const isLast = index === steps.length - 1;
           const StepIcon = step.icon;
-          const isLast = index === STATUS_STEPS.length - 1;
 
           return (
             <div key={step.key} className="flex gap-4">
-              {/* Icon + connector line */}
+              {/* ICON */}
               <div className="flex flex-col items-center">
                 <div
                   className={`
-                    relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 flex-shrink-0 transition-all duration-500
+                    w-10 h-10 flex items-center justify-center rounded-full border-2
                     ${isDone
-                      ? `bg-slate-800 border-slate-800`
+                      ? "bg-slate-800 border-slate-800"
                       : isActive
-                      ? `${step.bg} ${step.border} shadow-md`
-                      : `bg-slate-50 border-slate-200`
-                    }
+                        ? `${step.bg} ${step.border}`
+                        : "bg-slate-50 border-slate-200"}
                   `}
                 >
                   {isDone ? (
                     <CheckCircle2 size={18} className="text-white" />
-                  ) : isActive ? (
-                    <>
-                      <StepIcon size={18} className={step.color} />
-                      {/* pulse ring for active */}
-                      <span className={`absolute inset-0 rounded-full animate-ping ${step.bg} opacity-60`} />
-                    </>
                   ) : (
-                    <StepIcon size={18} className="text-slate-300" />
+                    <StepIcon
+                      size={18}
+                      className={isActive ? step.color : "text-slate-300"}
+                    />
                   )}
                 </div>
 
-                {/* connector line */}
                 {!isLast && (
-                  <div className="w-0.5 flex-1 my-1 min-h-[24px]">
-                    <div
-                      className={`w-full h-full rounded-full transition-all duration-700 ${
-                        isDone ? "bg-slate-800" : "bg-slate-200"
+                  <div
+                    className={`w-0.5 h-8 ${isDone ? "bg-slate-800" : "bg-slate-200"
                       }`}
-                    />
-                  </div>
+                  />
                 )}
               </div>
-
-              {/* Text */}
-              <div className={`pb-5 ${isLast ? "pb-0" : ""} pt-1.5`}>
+              {/* TEXT */}
+              <div className="pb-5 pt-1.5">
                 <p
-                  className={`text-sm font-black leading-tight transition-colors duration-300 ${
-                    isDone
-                      ? "text-slate-500 line-through decoration-slate-300"
-                      : isActive
+                  className={`text-sm font-black ${isDone
+                    ? "text-slate-500 line-through"
+                    : isActive
                       ? "text-slate-900"
                       : "text-slate-400"
-                  }`}
+                    }`}
                 >
                   {step.label}
                 </p>
+
                 {isActive && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`text-xs font-semibold mt-0.5 ${step.color}`}
-                  >
+                  <p className={`text-xs font-semibold ${step.color}`}>
                     {step.subLabel}
-                  </motion.p>
+                  </p>
                 )}
               </div>
             </div>
           );
         })}
+        {/* ✅ FEEDBACK BUTTON INSIDE TRACKER */}
+        {(status === "COMPLETED" || status === "REJECTED") && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => {
+                const workerId = booking?.worker?.worker_Id;
+                if (!workerId) {
+                  alert("Worker ID missing!");
+                  return;
+                }
+                navigate("/feedback", {
+                  state: {
+                    historyId: booking.historyId,
+                    workerId: workerId,
+                    serviceId: booking.services?.service_Id
+                  }
+                });
+              }}
+              className="
+      group relative inline-flex items-center gap-2
+      bg-gradient-to-r from-emerald-500 to-green-600
+      hover:from-emerald-600 hover:to-green-700
+      text-white px-6 py-2.5 rounded-xl
+      text-sm font-bold
+      shadow-lg hover:shadow-xl
+      transition-all duration-300 ease-in-out
+      hover:scale-105 active:scale-95
+    "
+            >
+              {/* Glow effect */}
+              <span className="absolute inset-0 rounded-xl bg-emerald-400 opacity-0 group-hover:opacity-20 blur-md transition duration-300"></span>
+              {/* Icon */}
+              <Star
+                size={16}
+                className="text-yellow-300 fill-yellow-300 group-hover:rotate-12 transition-transform duration-300"
+              />
+              Give Feedback
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -175,10 +237,20 @@ const StatusTracker = ({ status }) => {
 // ─── STATUS BADGE ───────────────────────────────────────────────────────────
 const StatusBadge = ({ status }) => {
   const map = {
+    REGISTERED: {
+      label: "Registered",
+      cls: "bg-black-50 text-blue-600 border border-blue-200",
+      dot: "bg-blue-500",
+    },
     PENDING: {
       label: "Pending",
       cls: "bg-blue-50 text-blue-600 border border-blue-200",
       dot: "bg-blue-500",
+    },
+    REJECTED: {
+      label: "Rejected",
+      cls: "bg-red-50 text-red-600 border border-red-200",
+      dot: "bg-red-500",
     },
     ACCEPTED: {
       label: "On the Way",
@@ -194,16 +266,6 @@ const StatusBadge = ({ status }) => {
       label: "Completed",
       cls: "bg-emerald-50 text-emerald-600 border border-emerald-200",
       dot: "bg-emerald-500",
-    },
-    REJECTED: {
-      label: "Rejected",
-      cls: "bg-red-50 text-red-600 border border-red-200",
-      dot: "bg-red-500",
-    },
-    CANCELLED: {
-      label: "Cancelled",
-      cls: "bg-red-50 text-red-600 border border-red-200",
-      dot: "bg-red-400",
     },
   };
 
@@ -228,10 +290,10 @@ const StatusBadge = ({ status }) => {
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 const ExpertTrackingPage = ({ onBack }) => {
   const [booking, setBooking] = useState(null);
-  const [status, setStatus] = useState("PENDING");
+  const [status, setStatus] = useState();
   const [eta, setEta] = useState(12);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-
+  const navigate = useNavigate();
   const getCustomerId = () => {
     const auth = localStorage.getItem("fixongo_auth");
     if (!auth) return null;
@@ -268,7 +330,7 @@ const ExpertTrackingPage = ({ onBack }) => {
       if (data && data.length > 0) {
         const latest = data[data.length - 1];
         setBooking(latest);
-        setStatus(latest.serviceStatus?.toUpperCase() || "PENDING");
+        setStatus(latest.serviceStatus?.toUpperCase());
         setLastUpdated(new Date());
       }
     } catch (error) {
@@ -302,7 +364,12 @@ const ExpertTrackingPage = ({ onBack }) => {
     );
   }
 
-  const currentStep = STATUS_STEPS[getStepIndex(status)];
+  const upperStatus = status?.toUpperCase();
+  const isRejectedFlow = upperStatus === "REJECTED";
+  const flow = isRejectedFlow ? REJECTED_FLOW : NORMAL_FLOW;
+  const currentIndex = getStepIndex(upperStatus, flow);
+  const currentStep = STATUS_STEPS.find(step => step.key === upperStatus) || STATUS_STEPS[0];
+
   const StepIcon = currentStep?.icon || Navigation;
 
   return (
@@ -345,24 +412,29 @@ const ExpertTrackingPage = ({ onBack }) => {
               >
                 <StepIcon
                   size={24}
-                  className={`${currentStep?.color || "text-blue-500"} ${
-                    status === "ACCEPTED" || status === "IN_PROGRESS"
-                      ? "animate-pulse"
-                      : ""
-                  }`}
+                  className={`${currentStep?.color || "text-blue-500"} ${status === "ACCEPTED" || status === "IN_PROGRESS"
+                    ? "animate-pulse"
+                    : ""
+                    }`}
                 />
               </div>
 
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="text-xl font-black text-slate-900">
-                    {status === "PENDING"
-                      ? "Booking Confirmed"
-                      : status === "ACCEPTED"
-                      ? "Expert is on the Way"
-                      : status === "IN_PROGRESS"
-                      ? "Work in Progress"
-                      : "Service Completed"}
+                    {status === "REGISTERED"
+                      ? "Service Booked"
+                      : status === "PENDING"
+                        ? "Booking Confirmed"
+                        : status === "REJECTED"
+                          ? "Booking Rejected"
+                          : status === "ACCEPTED"
+                            ? "Expert is on the Way"
+                            : status === "IN_PROGRESS"
+                              ? "Work in Progress"
+                              : status === "COMPLETED"
+                                ? "Service Completed"
+                                : "Service Status"}
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -386,9 +458,9 @@ const ExpertTrackingPage = ({ onBack }) => {
             </p>
           </motion.div>
 
-          
+
           {/* STATUS TRACKER */}
-          <StatusTracker status={status} />
+          <StatusTracker status={status}  booking={booking} navigate={navigate}/>
         </div>
 
         {/* RIGHT SIDE */}
@@ -497,7 +569,7 @@ const ExpertTrackingPage = ({ onBack }) => {
                   Bill Amount
                 </p>
                 <p className="text-2xl font-black text-slate-900">
-                  ₹{booking.services?.service_price}
+                  ₹{booking.worker?.worker_fees}
                 </p>
               </div>
 

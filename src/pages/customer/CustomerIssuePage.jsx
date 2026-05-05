@@ -136,7 +136,7 @@ export default function CustomerIssuePage() {
 
       alert("Booking Successful ✅");
 
-      navigate("/");
+      navigate("/trackservice");
     } catch (error) {
       console.error("BOOKING ERROR:", error.response?.data || error.message);
       alert("Booking Failed ❌");

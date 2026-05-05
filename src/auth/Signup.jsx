@@ -14,6 +14,7 @@ import {
   RiUserLine,
   RiUserSmileLine
 } from "react-icons/ri";
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import { signUp } from "../services/customer-service";
 
 
@@ -35,6 +36,7 @@ function Signup({ onClose, onLogin, onSwitchToLogin }) {
   });
 
   const [isGenderOpen, setIsGenderOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const genders = ["Male", "Female", "Other"];
 
   const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -52,6 +54,7 @@ function Signup({ onClose, onLogin, onSwitchToLogin }) {
       alert("Passwords do not match");
       return;
     }
+    
 
     const payload = {
       customer_name: form.name,
@@ -98,9 +101,9 @@ function Signup({ onClose, onLogin, onSwitchToLogin }) {
             <div className="inline-flex bg-slate-950 text-white px-4 py-2 rounded-xl rotate-[-2deg] mb-6 shadow-lg shadow-slate-200">
               <span className="text-lg font-black tracking-tighter italic">
                 FixOn
-              <span className="text-blue-500 not-italic">
-                Go
-              </span></span>
+                <span className="text-blue-500 not-italic">
+                  Go
+                </span></span>
             </div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">
               Create Account
@@ -109,8 +112,8 @@ function Signup({ onClose, onLogin, onSwitchToLogin }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="relative group">
-             <RiUserLine className={iconClass} size={20} />
-             <input name="name" placeholder="Full Name" className={inputClass} onChange={change} />
+              <RiUserLine className={iconClass} size={20} />
+              <input name="name" placeholder="Full Name" className={inputClass} onChange={change} />
             </div>
             <div className="relative group">
               <RiMailLine className={iconClass} size={20} />
@@ -164,18 +167,39 @@ function Signup({ onClose, onLogin, onSwitchToLogin }) {
             </div>
 
             <div className="relative group md:col-span-2"><RiMapPinLine className={iconClass} size={20} /><input name="address" placeholder="Street Address / Area House No." className={inputClass} onChange={change} /></div>
-             
-             <div className="relative group md:col-span-"><RiMapPinLine className={iconClass} size={20} /><input name="state" placeholder="State" className={inputClass} onChange={change} /></div>
-             
-              <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="district" placeholder="District" className={inputClass} onChange={change} /></div>
-             
-              <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="city" placeholder="City" className={inputClass} onChange={change} /></div>
-              
-               <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="pinCode" placeholder="Pin Code" className={inputClass} onChange={change} /></div>
+
+            <div className="relative group md:col-span-"><RiMapPinLine className={iconClass} size={20} /><input name="state" placeholder="State" className={inputClass} onChange={change} /></div>
+
+            <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="district" placeholder="District" className={inputClass} onChange={change} /></div>
+
+            <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="city" placeholder="City" className={inputClass} onChange={change} /></div>
+
+            <div className="relative group md:col-span-1"><RiMapPinLine className={iconClass} size={20} /><input name="pinCode" placeholder="Pin Code" className={inputClass} onChange={change} /></div>
 
             <div className="relative group md:col-span-2"><RiMapPinLine className={`${iconClass} opacity-30`} size={20} /><input name="officeAddress" placeholder="Office Address (Optional)" className={`${inputClass} border-dashed`} onChange={change} /></div>
-            <div className="relative group"><RiLockPasswordLine className={iconClass} size={20} /><input name="password" type="password" placeholder="Password" className={inputClass} onChange={change} /></div>
-            <div className="relative group"><RiShieldUserLine className={iconClass} size={20} /><input name="confirmPassword" type="password" placeholder="Confirm" className={inputClass} onChange={change} /></div>
+            <div className="relative group"><RiLockPasswordLine className={iconClass} size={20} /> <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className={`${inputClass} pr-12`}
+              onChange={change}
+            />
+              {/* Single Eye Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600"
+              >
+                {showPassword ? <RiEyeOffLine size={20} /> : <RiEyeLine size={20} />}
+              </button>
+            </div>
+            <div className="relative group"><RiShieldUserLine className={iconClass} size={20} /> <input
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm"
+              className={`${inputClass} pr-12`}
+              onChange={change}
+            /></div>
           </div>
 
           <button className="w-full mt-10 bg-blue-600 text-white py-5 rounded-[1.25rem] font-black text-sm uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-blue-200 active:scale-[0.98]">

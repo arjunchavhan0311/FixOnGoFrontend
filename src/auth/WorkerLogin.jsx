@@ -7,11 +7,13 @@ import {
   RiLockPasswordLine,
   RiMailLine
 } from "react-icons/ri";
+import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { logIn } from "../services/worker-service";
 
 function WorkerLogin() {
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -68,6 +70,7 @@ function WorkerLogin() {
 
     } catch (error) {
       setLoading(false);
+      setShowForgot(true); // ✅ show forgot option
       alert(
         error.response?.data?.message ||
         "Invalid email or password"
@@ -159,13 +162,21 @@ function WorkerLogin() {
               <div className="relative group">
                 <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-600 focus:bg-white font-medium"
                 />
+                {/* Eye Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600"
+                >
+                  {showPassword ? <RiEyeOffLine size={20} /> : <RiEyeLine size={20} />}
+                </button>
               </div>
             </div>
 
@@ -177,6 +188,18 @@ function WorkerLogin() {
             >
               {loading ? "Logging in..." : <>Go Online <RiArrowRightLine size={20} /></>}
             </button>
+            {showForgot && (
+              <div className="text-right -mt-3">
+                <span
+                  onClick={() => {
+                    navigate("/forgot-password/worker");
+                  }}
+                  className="text-sm text-red-500 font-semibold hover:underline cursor-pointer"
+                >
+                  Forgot Password?
+                </span>
+              </div>
+            )}
           </form>
 
           {/* REGISTER */}
